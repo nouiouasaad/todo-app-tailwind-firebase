@@ -1,39 +1,46 @@
-import React, { useState } from 'react'
-import { MdDeleteOutline } from 'react-icons/md';
-import { FaEdit } from 'react-icons/fa';
-import TodoForm from './TodoForm';
+import { useState } from 'react';
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
 
-function Todo({ todos, completeTodo, removeTodo, updateTodo }) {
+export default function Todo({ todo, toggleComplete, handleDelete, handleEdit}) {
+  const [newTitle, setNewTitle] = useState(todo.title);
 
-  const [edit, setEdit] = useState({
-    id: null,
-    value: ''
-  });
-
-  const submitUpdate = value => {
-    updateTodo(edit.id, value)
-
-    setEdit({
-      id: null,
-      value: ''
-    })
-  }
-
-  if (edit.id) {
-    return <TodoForm edit={edit} onSubmit={submitUpdate} />
-  }
-
-  return todos.map((todo, index) => (
-    <div className={todo.isComplete ? ' flex justify-center items-center py-4 px-1 bg-violet-100 shadow-lg rounded-lg my-5' : 'flex justify-between items-center py-4 px-1 bg-violet-100 shadow-lg rounded-lg my-2'} key={index}>
-      <div key={todo.id} onClick={() => completeTodo(todo.id)}>
-        <p className='m-2 text-white'>{todo.text}</p>
-      </div>
-      <div className='m-2'>
-        <MdDeleteOutline className='m-2 fill-blue-500' onClick={() => removeTodo(todo.id)}/>
-        <FaEdit className='m-2 fill-blue-500' onClick={() => setEdit({id: todo.id, value: todo.text})}/>
+  const handleChange = (e) => {
+    e.preventDefault();
+    if (todo.complete === true) {
+      setNewTitle(todo.title);
+    } else {
+      todo.title = "";
+      setNewTitle(e.target.value);
+    }
+  };
+  return (
+    <div className="todo">
+      <input
+        style={{ textDecoration: todo.completed && "line-through" }}
+        type="text"
+        value={todo.title === "" ? newTitle : todo.title}
+        className="list"
+        onChange={handleChange}
+      />
+      <div>
+        <button
+          className="button-complete"
+          onClick={() => toggleComplete(todo)}
+        >
+          <CheckCircleIcon id="i" />
+        </button>
+        <button
+          className="button-edit"
+          onClick={() => handleEdit(todo, newTitle)}
+        >
+          <EditIcon id="i" />
+        </button>
+        <button className="button-delete" onClick={() => handleDelete(todo.id)}>
+          <DeleteIcon id="i" />
+        </button>
       </div>
     </div>
-  ));
+  );
 }
-
-export default Todo

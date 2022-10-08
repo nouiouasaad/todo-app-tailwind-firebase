@@ -1,27 +1,29 @@
-import React, { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef } from 'react';
+import { db } from '../firebase';
+import { addDoc, collection } from 'firebase/firestore';
 
-function TodoForm({ onSubmit }) {
+function TodoForm() {
 
-  const [input, setInput] = useState('');
+  const [title, setTitle] = useState('');
   const inputRef = useRef(null);
 
   useEffect(() => {
     inputRef.current.focus()
   })
-  const handleSubmit = e => {
 
+  const handleSubmit = async (e) => {
     e.preventDefault()
 
-    onSubmit({
-      id: Math.floor(Math.random() * 10000),
-      text: input
+    await addDoc(collection(db, "todos"), {
+      title,
+      completed: false,
     });
 
-    setInput('');
+    setTitle('');
   }
 
   const handleChange = e => {
-    setInput(e.target.value);
+    setTitle(e.target.value);
   }
 
   return (
@@ -29,7 +31,7 @@ function TodoForm({ onSubmit }) {
       <form onSubmit={handleSubmit}>
         <div className='flex flex-col mb-2'>
           <div className='relative'>
-            <input className='rounded-lg border-transparent flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent' type="text" placeholder='Add a todo' value={input} name="text" onChange={handleChange} ref={inputRef} />
+            <input className='rounded-lg border-transparent flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent' type="text" placeholder='Add a todo' value={title} name="text" onChange={handleChange} ref={inputRef} />
           </div>
         </div>
         <div className='flex w-full my-4'>
@@ -40,4 +42,4 @@ function TodoForm({ onSubmit }) {
   )
 }
 
-export default TodoForm
+export default TodoForm;
